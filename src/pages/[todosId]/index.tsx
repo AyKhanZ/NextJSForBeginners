@@ -10,10 +10,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 const items =["Home","About","Conact us","Anar"]
 
-export default function Home({todosData}: any) {
+export default function Home({todosData, ourParams}: any) {
   const router = useRouter();
   const [flag,setFlag] =useState<boolean>(false)
   const [list,setList] = useState<Todo[]>();
+
 
 
   const handleAnar = ()=>{
@@ -29,7 +30,7 @@ export default function Home({todosData}: any) {
 
   useEffect(()=>{
     fetchData(); 
-    console.log(todosData)
+    console.log(ourParams)
   },[])
 
   return (
@@ -43,22 +44,44 @@ export default function Home({todosData}: any) {
   );
 }
 
-export const getStaticProps = async ({context}: any) => {
-    const response = await fetch("https://jsonplaceholder.typicode.com/todos");
-    const data = await response.json();
+// export const getServerSideProps = async (context: any) => {
+//     const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+//     const data = await response.json();
   
+//     const {params} = context
+//     return {
+//       props: {
+//       todosData: data,
+//       ourParams: params
+//     }}
+//   }
+
+export async function getStaticPaths() {
     return {
-      props: {
-      todosData: data,
-    }}
-  }
+        paths: [
+            {
+                params: {
+                todosId: 'anar'}
+            },
+            {
+                params: {
+                todosId: '2'}
+            },
+            {
+                params: {
+                todosId: '3'}
+            },
+            
+        ], fallback: 'blocking'
+    }
+}
 
-// export const getServerSideProps = async ({context}: any) => {
-//   const response = await fetch("https://jsonplaceholder.typicode.com/todos");
-//   const data = await response.json();
+export const getStaticProps = async ({context}: any) => {
+  const response = await fetch("https://jsonplaceholder.typicode.com/todos");
+  const data = await response.json();
 
-//   return {
-//     props: {
-//     todosData: data,
-//   }}
-// }
+  return {
+    props: {
+    todosData: data,
+  }}
+}
